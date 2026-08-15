@@ -287,14 +287,13 @@ function processRows(rows){
     c: CAT_CONFIG[p.cat]||'#888'
   })).filter(p=>p.t>0);
 
-  // ── Proyección: VP último corte / día del corte × días del mes ──
+  // ── Proyección: VP del último corte × días del mes ──
   const lastLabel=fechas[fi];
-  const diaMatch=lastLabel.match(/^(\d+)/);
-  const diasTranscurridos=diaMatch?parseInt(diaMatch[1]):15;
   const diasMes=31;
-  // Proyección = venta perdida del último corte / días transcurridos × días del mes
+  const diasTranscurridos=14; // para mostrar en el detalle del KPI
+  // La VP del corte ya representa un día → multiplicar directo por días del mes
   const vpUltimoCorte=totalGeneral[fi]||0;
-  const proyeccion=Math.round(vpUltimoCorte/diasTranscurridos*diasMes);
+  const proyeccion=Math.round(vpUltimoCorte*diasMes);
 
   return{fechas,totalesCat,totalGeneral,prodsLast,proyeccion,diasTranscurridos,diasMes,lastLabel};
 }
@@ -332,7 +331,7 @@ function renderDashboard(data){
     <div class="kpi"><div class="kpi-accent" style="background:var(--purple)"></div>
       <div class="kpi-label">Proyección del mes</div>
       <div class="kpi-value">${fmtK(proyeccion)}</div>
-      <div class="kpi-detail">VP diaria × ${diasMes} días del mes</div>
+      <div class="kpi-detail">VP corte × ${diasMes} días del mes</div>
     </div>`;
 
   // ── Alerta ──
