@@ -284,14 +284,17 @@ function processRows(rows){
   if(headerRow<0) throw new Error('No se encontró encabezado con CATEGORÍA.');
   const header=rows[headerRow];
 
+  // Columnas fijas basadas en tu estructura del Sheets
+  // B=1(Categoría) C=2(SKU) D=3(Producto) E=4(AVG) F=5(Precio) G+=fechas
   let colCat=1,colSku=2,colProd=3,colAvg=4,colPrecio=5;
+  // Intento detectar por nombre por si acaso cambia el orden
   for(let c=0;c<header.length;c++){
-    const h=String(header[c]||'').toUpperCase().trim();
-    if(h.includes('CATEGOR')&&colCat===1) colCat=c;
-    else if(h.includes('SKU')) colSku=c;
-    else if(h.includes('PRODUCT')) colProd=c;
-    else if((h.includes('AVG')||h.includes('SO/D'))) colAvg=c;
-    else if(h.includes('PRECIO')) colPrecio=c;
+    const h=String(header[c]||'').toUpperCase().replace(/[ÁÀÂÃ]/g,'A').replace(/[ÉÈÊ]/g,'E').replace(/[ÍÌÎÏ]/g,'I').replace(/[ÓÒÔÕ]/g,'O').replace(/[ÚÙÛÜ]/g,'U').replace(/[^A-Z0-9/]/g,'').trim();
+    if(h.startsWith('CATEG')) colCat=c;
+    else if(h==='SKU') colSku=c;
+    else if(h.startsWith('PROD')) colProd=c;
+    else if(h.startsWith('AVG')||h.startsWith('SODI')||h.startsWith('SODA')) colAvg=c;
+    else if(h.startsWith('PRECI')) colPrecio=c;
   }
 
   const fechasCols=[];
